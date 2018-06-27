@@ -6,6 +6,9 @@ import re
 import random
 from PIL import Image
 
+def stripNick(nick):
+    return nick.replace('|', '').replace('[', '').replace(']', '')
+
 @willie.module.commands('comic')
 def comic(bot, trigger):
     try:
@@ -27,13 +30,13 @@ def comic(bot, trigger):
         for x in range(offset_length, len(bot.memory['log'][trigger.sender]['lines'])):
             line = ''
             if bot.memory['log'][trigger.sender][u'lines'][x][:6] == 'ACTION':
-                line = bot.memory['log'][trigger.sender]['nicks'][x] + '* ' + bot.memory['log'][trigger.sender]['nicks'][x] + bot.memory['log'][trigger.sender][u'lines'][x][6:] + '\n'
+                line = stripNick(bot.memory['log'][trigger.sender]['nicks'][x]) + '* ' + bot.memory['log'][trigger.sender]['nicks'][x] + bot.memory['log'][trigger.sender][u'lines'][x][6:] + '\n'
             else:
-                line = '' + bot.memory['log'][trigger.sender]['nicks'][x] + ': ' + bot.memory['log'][trigger.sender][u'lines'][x] + '\n'
+                line = '' + stripNick(bot.memory['log'][trigger.sender]['nicks'][x]) + ': ' + bot.memory['log'][trigger.sender][u'lines'][x] + '\n'
             f.write(line)
     else:
         for x in range(0, len(bot.memory['log'][trigger.sender]['lines'])):
-            f.write(bot.memory['log'][trigger.sender]['nicks'][x] + ': ' + bot.memory['log'][trigger.sender][u'lines'][x] + '\n')
+            f.write(stripNick(bot.memory['log'][trigger.sender]['nicks'][x]) + ': ' + bot.memory['log'][trigger.sender][u'lines'][x] + '\n')
     f.close()
     subprocess.call(['/home/svchost/spittoon/comic.sh'])
     subprocess.call(['/home/svchost/spittoon/imgur.sh'])
